@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,55 +12,52 @@
 
     <TextView
         android:id="@+id/filename_label"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/filename_string_label"
         android:textSize="@dimen/default_text_size"
         android:textStyle="bold"
-        app:layout_constraintHorizontal_weight="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/filename_value"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/radio_option_1"
         android:textSize="@dimen/default_text_size"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/guideline"
-        app:layout_constraintTop_toTopOf="parent" />
+        />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_begin="96dp"
-        app:layout_constraintStart_toStartOf="parent" />
+<!--    <androidx.constraintlayout.widget.Guideline-->
+<!--        android:id="@+id/guideline"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintGuide_begin="96dp"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 
 
-        <TextView
-            android:id="@+id/status_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/fab_margin"
-            android:text="@string/status_label_string"
-            android:textSize="@dimen/default_text_size"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/filename_value" />
+<!--        <TextView-->
+<!--            android:id="@+id/status_label"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="@dimen/fab_margin"-->
+<!--            android:text="@string/status_label_string"-->
+<!--            android:textSize="@dimen/default_text_size"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/filename_value" />-->
 
-        <TextView
-            android:id="@+id/status_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/default_text_size"
-            app:layout_constraintBaseline_toBaselineOf="@id/status_label"
-            app:layout_constraintStart_toStartOf="@+id/filename_value"
-            tools:text="@string/download_success_string" />
+<!--        <TextView-->
+<!--            android:id="@+id/status_value"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textSize="@dimen/default_text_size"-->
+<!--            app:layout_constraintBaseline_toBaselineOf="@id/status_label"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/filename_value"-->
+<!--            tools:text="@string/download_success_string" />-->
 
 <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
 <!--        android:id="@+id/fab"-->
@@ -69,4 +66,4 @@
 <!--        android:layout_margin="@dimen/fab_margin"-->
 <!--        app:srcCompat="@drawable/ic_baseline_arrow_back_ios_24" />-->
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

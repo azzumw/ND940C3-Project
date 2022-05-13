@@ -19,16 +19,16 @@ class DetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail)
         setSupportActionBar(toolbar)
 
-        filenameTextView = findViewById(R.id.filename_value)
-        statusTextView = findViewById(R.id.status_value)
+//        filenameTextView = findViewById(R.id.filename_value)
+//        statusTextView = findViewById(R.id.status_value)
 
         val downloadID = intent.extras?.getLong(DOWNLOAD_ID_KEY)!!
         val notificationId = intent.extras?.getInt(NOTIFICATION_ID_KEY)
         val status = intent.extras?.getString(STATUS_KEY)
         val filename = intent.extras?.getString(FILE_NAME_KEY)
 
-        filenameTextView.text = filename
-        statusTextView.text = status.toString()
+//        filenameTextView.text = filename
+//        statusTextView.text = status.toString()
 
         val nm = getSystemService(NotificationManager::class.java) as NotificationManager
 
