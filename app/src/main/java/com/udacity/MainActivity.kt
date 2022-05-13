@@ -18,6 +18,7 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import com.udacity.ButtonState.Completed
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -27,14 +28,12 @@ const val STATUS_KEY = "status"
 const val DOWNLOAD_ID_KEY = "download_id"
 const val NOTIFICATION_ID_KEY = "notification_id"
 const val FILE_NAME_KEY = "file_name"
-class MainActivity : AppCompatActivity() {
 
+class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
     private lateinit var currentUrl:String
     private lateinit var filename:String
-
-
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
@@ -80,7 +79,6 @@ class MainActivity : AppCompatActivity() {
                 .setFilterById(downloadID))
 
 
-
             if (cursor.moveToFirst()) {
                 val valueOfStatus = cursor.getInt(cursor.getColumnIndex(COLUMN_STATUS))
                     cursor.columnNames.forEach { println(it) }
@@ -113,6 +111,8 @@ class MainActivity : AppCompatActivity() {
                 .setAutoCancel(true)
 
             notificationManager.notify(NOTIFICATION_ID,builder.build())
+
+            //update Button State
 
         }
     }
