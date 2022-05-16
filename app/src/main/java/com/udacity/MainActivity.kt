@@ -14,13 +14,16 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import com.udacity.ButtonState.Completed
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.content_main.view.*
 
 
 const val TAG = "MainActivity"
@@ -28,12 +31,17 @@ const val STATUS_KEY = "status"
 const val DOWNLOAD_ID_KEY = "download_id"
 const val NOTIFICATION_ID_KEY = "notification_id"
 const val FILE_NAME_KEY = "file_name"
+var isDownloadComplete = false
+var hasDownloadStarted = Download.NOT_STARTED
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var loadingButton: LoadingButton
+    var radioButtonIsSelected = false
     private var downloadID: Long = 0
     private lateinit var currentUrl:String
     private lateinit var filename:String
+    private lateinit var rdGroup:RadioGroup
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
@@ -43,8 +51,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
+        loadingButton = findViewById(R.id.custom_button)
         notificationManager = getSystemService(NotificationManager::class.java)
+
+        rdGroup = findViewById(R.id.radioGroup)
+
+        rdGroup.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId == -1){
+                isDownloadComplete = false
+                hasDownloadStarted = Download.NOT_STARTED
+
+            }else if(checkedId == rdGroup.checkedRadioButtonId){
+                //
+            }else{
+
+            }
+
+        }
+
+
+
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
@@ -52,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             CHANNEL_ID,
             getString(R.string.notification_channel_name))
 
-        custom_button.setOnClickListener {
+        loadingButton.setOnClickListener {
 
             if (radioButtonIsSelected){
                 download()
@@ -63,14 +89,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
 
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
 
+            val intentAction = intent?.action
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE == intentAction) {
+                Log.e("TAG Download Status", "  - completed")
+                isDownloadComplete = true
+                hasDownloadStarted = Download.NOT_STARTED
+//                rdGroup.clearCheck()
+//                radioButtonIsSelected = false
+            }
+
+
             val intent = Intent(this@MainActivity,DetailActivity::class.java)
 
             var statusString = getString(R.string.download_failed_string)
+
 
             val downloadManager = getSystemService(Context.DOWNLOAD_SERVICE)
                     as DownloadManager
@@ -86,7 +124,6 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG,"uri: $localUri")
                 if (valueOfStatus==DownloadManager.STATUS_SUCCESSFUL) {
                     statusString =  getString(R.string.download_success_string)
-
                 }
             }
 
@@ -103,6 +140,8 @@ class MainActivity : AppCompatActivity() {
             action = NotificationCompat.Action(R.drawable.ic_assistant_black_24dp,
             getString(R.string.notification_button),pendingIntent)
 
+
+
             val builder = NotificationCompat.Builder(this@MainActivity, CHANNEL_ID)
                 .setContentTitle(getString(R.string.notification_title))
                 .setSmallIcon(R.drawable.ic_assistant_black_24dp)
@@ -112,12 +151,12 @@ class MainActivity : AppCompatActivity() {
 
             notificationManager.notify(NOTIFICATION_ID,builder.build())
 
-            //update Button State
-
         }
     }
 
     private fun download() {
+
+        hasDownloadStarted = Download.STARTED
 
         Toast.makeText(this,"downloading... $currentUrl",Toast.LENGTH_LONG).show()
 
