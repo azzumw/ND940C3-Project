@@ -33,15 +33,16 @@ const val NOTIFICATION_ID_KEY = "notification_id"
 const val FILE_NAME_KEY = "file_name"
 var isDownloadComplete = false
 var hasDownloadStarted = Download.NOT_STARTED
+var radioButtonIsSelected = false
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var loadingButton: LoadingButton
-    var radioButtonIsSelected = false
+
     private var downloadID: Long = 0
-    private lateinit var currentUrl:String
-    private lateinit var filename:String
-    private lateinit var rdGroup:RadioGroup
+    private lateinit var currentUrl: String
+    private lateinit var filename: String
+    private lateinit var rdGroup: RadioGroup
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
@@ -56,35 +57,36 @@ class MainActivity : AppCompatActivity() {
 
         rdGroup = findViewById(R.id.radioGroup)
 
+        //set radioButtonIsSelected false when starting this activity
+        radioButtonIsSelected = false
+
         rdGroup.setOnCheckedChangeListener { group, checkedId ->
-            if (checkedId == -1){
+
+            if (checkedId == -1) {
                 isDownloadComplete = false
                 hasDownloadStarted = Download.NOT_STARTED
 
-            }else if(checkedId == rdGroup.checkedRadioButtonId){
-                //
-            }else{
-
             }
-
         }
-
-
-
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
-        createNotificationChannel(
+        notificationManager.createNotificationChannel(
             CHANNEL_ID,
-            getString(R.string.notification_channel_name))
+            getString(R.string.notification_channel_name)
+        )
 
         loadingButton.setOnClickListener {
 
-            if (radioButtonIsSelected){
+            if (radioButtonIsSelected) {
                 download()
 
-            }else{
-                Toast.makeText(this,getString(R.string.no_radio_option_selected_message),Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    getString(R.string.no_radio_option_selected_message),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -105,60 +107,71 @@ class MainActivity : AppCompatActivity() {
             }
 
 
-            val intent = Intent(this@MainActivity,DetailActivity::class.java)
+            val intent = Intent(this@MainActivity, DetailActivity::class.java)
 
             var statusString = getString(R.string.download_failed_string)
 
 
             val downloadManager = getSystemService(Context.DOWNLOAD_SERVICE)
                     as DownloadManager
-            val cursor = downloadManager.query(DownloadManager
-                .Query()
-                .setFilterById(downloadID))
+            val cursor = downloadManager.query(
+                DownloadManager
+                    .Query()
+                    .setFilterById(downloadID)
+            )
 
 
             if (cursor.moveToFirst()) {
                 val valueOfStatus = cursor.getInt(cursor.getColumnIndex(COLUMN_STATUS))
-                    cursor.columnNames.forEach { println(it) }
+                cursor.columnNames.forEach { println(it) }
                 val localUri = cursor.getString(cursor.getColumnIndex("uri"))
-                Log.e(TAG,"uri: $localUri")
-                if (valueOfStatus==DownloadManager.STATUS_SUCCESSFUL) {
-                    statusString =  getString(R.string.download_success_string)
+                Log.e(TAG, "uri: $localUri")
+                if (valueOfStatus == DownloadManager.STATUS_SUCCESSFUL) {
+                    statusString = getString(R.string.download_success_string)
                 }
             }
 
             cursor.close()
 
-            intent.putExtra(DOWNLOAD_ID_KEY,id)
-            intent.putExtra(NOTIFICATION_ID_KEY, NOTIFICATION_ID)
-            intent.putExtra(STATUS_KEY,statusString)
-            intent.putExtra(FILE_NAME_KEY,filename)
+//            intent.putExtra(DOWNLOAD_ID_KEY, id)
+//            intent.putExtra(NOTIFICATION_ID_KEY, NOTIFICATION_ID)
+//            intent.putExtra(STATUS_KEY, statusString)
+//            intent.putExtra(FILE_NAME_KEY, filename)
 
 
-            pendingIntent = PendingIntent.getActivity(context,NOTIFICATION_ID,intent,PendingIntent.FLAG_UPDATE_CURRENT)
+//            pendingIntent = PendingIntent.getActivity(
+//                context,
+//                NOTIFICATION_ID,
+//                intent,
+//                PendingIntent.FLAG_UPDATE_CURRENT
+//            )
 
-            action = NotificationCompat.Action(R.drawable.ic_assistant_black_24dp,
-            getString(R.string.notification_button),pendingIntent)
+//            action = NotificationCompat.Action(
+//                R.drawable.ic_assistant_black_24dp,
+//                getString(R.string.notification_button), pendingIntent
+//            )
 
 
+//            val builder = NotificationCompat.Builder(this@MainActivity, CHANNEL_ID)
+//                .setContentTitle(getString(R.string.notification_title))
+//                .setSmallIcon(R.drawable.ic_assistant_black_24dp)
+//                .setContentText(getString(R.string.notification_description))
+//                .addAction(action)
+//                .setAutoCancel(true)
 
-            val builder = NotificationCompat.Builder(this@MainActivity, CHANNEL_ID)
-                .setContentTitle(getString(R.string.notification_title))
-                .setSmallIcon(R.drawable.ic_assistant_black_24dp)
-                .setContentText(getString(R.string.notification_description))
-                .addAction(action)
-                .setAutoCancel(true)
+//            notificationManager.notify(NOTIFICATION_ID, builder.build())
 
-            notificationManager.notify(NOTIFICATION_ID,builder.build())
-
+            notificationManager.sendNotification(this@MainActivity,id!!,statusString,filename)
         }
+
+
     }
 
     private fun download() {
 
         hasDownloadStarted = Download.STARTED
 
-        Toast.makeText(this,"downloading... $currentUrl",Toast.LENGTH_LONG).show()
+//        Toast.makeText(this,"downloading... $currentUrl",Toast.LENGTH_LONG).show()
 
         val request =
             DownloadManager.Request(Uri.parse(currentUrl))
@@ -172,7 +185,7 @@ class MainActivity : AppCompatActivity() {
 
         downloadID =
             downloadManager.enqueue(request)// enqueue puts the download request in the queue.
-        Log.e("MainActivity DOWNLOAD ID:","$downloadID")
+        Log.e("MainActivity DOWNLOAD ID:", "$downloadID")
     }
 
 
@@ -201,25 +214,28 @@ class MainActivity : AppCompatActivity() {
                     currentUrl = RETROFIT_URL
                     filename = getString(R.string.radio_option_3)
                 }
+
             }
         }
     }
 
 
-    private fun createNotificationChannel(channelId:String,channelName:String){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val channel = NotificationChannel(channelId,channelName,NotificationManager.IMPORTANCE_LOW)
-
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
+//    private fun createNotificationChannel(channelId: String, channelName: String) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val channel =
+//                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+//
+//            notificationManager.createNotificationChannel(channel)
+//        }
+//    }
 
     companion object {
 
         private const val URL =
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
         private const val GLIDE_URL = "https://github.com/bumptech/glide"
-        private const val LOADAPP_URL = "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter"
+        private const val LOADAPP_URL =
+            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter"
         private const val RETROFIT_URL = "https://github.com/square/retrofit"
 
         private const val CHANNEL_ID = "channelId"

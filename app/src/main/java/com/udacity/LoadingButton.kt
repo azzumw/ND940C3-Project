@@ -31,6 +31,9 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     private val loadingRect = Rect()
+    private var rectF = RectF(0f, 0f, 80f, 80f)
+
+
     private var valueAnimator = ValueAnimator()
     private var progress: Int = 0
 
@@ -49,6 +52,10 @@ class LoadingButton @JvmOverloads constructor(
             }
 
             is ButtonState.Loading -> {
+
+                //positioning the circle
+                rectF.offsetTo((width-270).toFloat(),30f)
+
                 //animate the rectangle
                 //create value animator
                 Log.e("LoadingButton", "I am in Loading State")
@@ -66,7 +73,6 @@ class LoadingButton @JvmOverloads constructor(
                     }
 //
                     //if download has not started then repeat anim once
-
                     if (hasDownloadStarted == Download.STARTED) {
                         // Repeat the animation infinitely.
                         repeatCount = ValueAnimator.INFINITE
@@ -114,6 +120,11 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     override fun performClick(): Boolean {
+
+        if(!radioButtonIsSelected){
+            return super.performClick()
+        }
+
         /*call parent's performClick to ensure
             any click listeners attached are also invoked.
             */
@@ -130,7 +141,7 @@ class LoadingButton @JvmOverloads constructor(
         }
 
         invalidate()
-        return true
+       return true
     }
 
 
@@ -138,14 +149,18 @@ class LoadingButton @JvmOverloads constructor(
         super.onDraw(canvas)
 
         //Draw Rectangle
-
         paint.color = context.getColor(R.color.colorPrimaryDark)
         loadingRect.set(0, 0, width * progress / 360, height)
         Log.e("Call from onDraw: ", "progress: $progress")
         canvas?.drawRect(loadingRect, paint)
 
         //Draw Arc/Circle
-        //we need to rotate
+        paint.color = Color.YELLOW
+        canvas?.drawArc(rectF,
+            0f,
+            progress.toFloat(),
+            true,
+            paint)
 
         //3. Draw Text
         paint.color = Color.WHITE
@@ -175,18 +190,5 @@ class LoadingButton @JvmOverloads constructor(
         heightSize = h
         setMeasuredDimension(w, h)
     }
-
-//    override fun performClick(): Boolean {
-//        if(super.performClick())  return true
-//
-//       if(!radioButtonIsSelected){
-//           Toast.makeText(context,"Select an option",Toast.LENGTH_SHORT).show()
-//           return true
-//       }
-//        Toast.makeText(context,"Downloading..",Toast.LENGTH_SHORT).show()
-//
-//
-//        return true
-//    }
 
 }

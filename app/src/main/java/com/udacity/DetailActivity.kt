@@ -42,12 +42,12 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun goBack(){
-        Toast.makeText(this,"Lets do it!",Toast.LENGTH_LONG).show()
+//        Toast.makeText(this,"Lets do it!",Toast.LENGTH_LONG).show()
         onSupportNavigateUp()
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-
+//        super.onBackPressed()
+        onSupportNavigateUp()
     }
 }
