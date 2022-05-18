@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.content.withStyledAttributes
 import kotlin.properties.Delegates
 
 
@@ -21,6 +22,9 @@ class LoadingButton @JvmOverloads constructor(
 
     private var widthSize = 0
     private var heightSize = 0
+
+    private var circleColor = 0
+    private var loadingRectColor = 0
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
@@ -117,6 +121,10 @@ class LoadingButton @JvmOverloads constructor(
         isClickable = true
         buttonState = ButtonState.Completed
 
+        context.withStyledAttributes(attrs,R.styleable.LoadingButton){
+            loadingRectColor = getColor(R.styleable.LoadingButton_loadingColor,0)
+            circleColor = getColor(R.styleable.LoadingButton_circleColor,0)
+        }
     }
 
     override fun performClick(): Boolean {
@@ -149,13 +157,13 @@ class LoadingButton @JvmOverloads constructor(
         super.onDraw(canvas)
 
         //Draw Rectangle
-        paint.color = context.getColor(R.color.colorPrimaryDark)
+        paint.color = loadingRectColor
         loadingRect.set(0, 0, width * progress / 360, height)
         Log.e("Call from onDraw: ", "progress: $progress")
         canvas?.drawRect(loadingRect, paint)
 
         //Draw Arc/Circle
-        paint.color = Color.YELLOW
+        paint.color = circleColor
         canvas?.drawArc(rectF,
             0f,
             progress.toFloat(),

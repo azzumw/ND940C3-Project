@@ -58,15 +58,15 @@ class MainActivity : AppCompatActivity() {
         rdGroup = findViewById(R.id.radioGroup)
 
         //set radioButtonIsSelected false when starting this activity
+//        rdGroup.clearCheck()
         radioButtonIsSelected = false
 
         rdGroup.setOnCheckedChangeListener { group, checkedId ->
 
-            if (checkedId == -1) {
-                isDownloadComplete = false
-                hasDownloadStarted = Download.NOT_STARTED
+            if(checkedId==-1)
+            isDownloadComplete = false
+            hasDownloadStarted = Download.NOT_STARTED
 
-            }
         }
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
@@ -102,15 +102,9 @@ class MainActivity : AppCompatActivity() {
                 Log.e("TAG Download Status", "  - completed")
                 isDownloadComplete = true
                 hasDownloadStarted = Download.NOT_STARTED
-//                rdGroup.clearCheck()
-//                radioButtonIsSelected = false
             }
 
-
-            val intent = Intent(this@MainActivity, DetailActivity::class.java)
-
             var statusString = getString(R.string.download_failed_string)
-
 
             val downloadManager = getSystemService(Context.DOWNLOAD_SERVICE)
                     as DownloadManager
@@ -120,12 +114,9 @@ class MainActivity : AppCompatActivity() {
                     .setFilterById(downloadID)
             )
 
-
             if (cursor.moveToFirst()) {
                 val valueOfStatus = cursor.getInt(cursor.getColumnIndex(COLUMN_STATUS))
                 cursor.columnNames.forEach { println(it) }
-                val localUri = cursor.getString(cursor.getColumnIndex("uri"))
-                Log.e(TAG, "uri: $localUri")
                 if (valueOfStatus == DownloadManager.STATUS_SUCCESSFUL) {
                     statusString = getString(R.string.download_success_string)
                 }
@@ -133,45 +124,13 @@ class MainActivity : AppCompatActivity() {
 
             cursor.close()
 
-//            intent.putExtra(DOWNLOAD_ID_KEY, id)
-//            intent.putExtra(NOTIFICATION_ID_KEY, NOTIFICATION_ID)
-//            intent.putExtra(STATUS_KEY, statusString)
-//            intent.putExtra(FILE_NAME_KEY, filename)
-
-
-//            pendingIntent = PendingIntent.getActivity(
-//                context,
-//                NOTIFICATION_ID,
-//                intent,
-//                PendingIntent.FLAG_UPDATE_CURRENT
-//            )
-
-//            action = NotificationCompat.Action(
-//                R.drawable.ic_assistant_black_24dp,
-//                getString(R.string.notification_button), pendingIntent
-//            )
-
-
-//            val builder = NotificationCompat.Builder(this@MainActivity, CHANNEL_ID)
-//                .setContentTitle(getString(R.string.notification_title))
-//                .setSmallIcon(R.drawable.ic_assistant_black_24dp)
-//                .setContentText(getString(R.string.notification_description))
-//                .addAction(action)
-//                .setAutoCancel(true)
-
-//            notificationManager.notify(NOTIFICATION_ID, builder.build())
-
             notificationManager.sendNotification(this@MainActivity,id!!,statusString,filename)
         }
-
-
     }
 
     private fun download() {
 
         hasDownloadStarted = Download.STARTED
-
-//        Toast.makeText(this,"downloading... $currentUrl",Toast.LENGTH_LONG).show()
 
         val request =
             DownloadManager.Request(Uri.parse(currentUrl))
@@ -220,15 +179,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-//    private fun createNotificationChannel(channelId: String, channelName: String) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val channel =
-//                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
-//
-//            notificationManager.createNotificationChannel(channel)
-//        }
-//    }
-
     companion object {
 
         private const val URL =
@@ -240,32 +190,4 @@ class MainActivity : AppCompatActivity() {
 
         private const val CHANNEL_ID = "channelId"
     }
-
-//    private fun getDownloadStatus() {
-//        val query = DownloadManager.Query()
-//        query.setFilterById(downloadID)
-//        cursor = (getSystemService(DOWNLOAD_SERVICE) as DownloadManager)
-//            .query(query)
-//        if (cursor.moveToFirst()) {
-//            val timer = Timer()
-//            timer.schedule(object : TimerTask() {
-//                override fun run() {
-//                    query.setFilterById(downloadID)
-//                    val cursor = (getSystemService(DOWNLOAD_SERVICE) as DownloadManager)
-//                        .query(query)
-//                    cursor.moveToFirst()
-//                    val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-//                    if (status == DownloadManager.STATUS_RUNNING) {
-//                        Log.i("DM_STATUS", "status is " + " running")
-//                    } else if (status == DownloadManager.STATUS_SUCCESSFUL) {
-////                            statusString = "SUCCESS"
-//
-//                        Log.i("DM_STATUS", "status is " + " success")
-//                        timer.cancel()
-//                    }
-//                }
-//            }, 100, 1)
-//        }
-//    }
-
 }
