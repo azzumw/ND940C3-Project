@@ -43,8 +43,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rdGroup: RadioGroup
 
     private lateinit var notificationManager: NotificationManager
-    private lateinit var pendingIntent: PendingIntent
-    private lateinit var action: NotificationCompat.Action
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,16 +53,8 @@ class MainActivity : AppCompatActivity() {
 
         rdGroup = findViewById(R.id.radioGroup)
 
-        //set radioButtonIsSelected false when starting this activity
-//        rdGroup.clearCheck()
         radioButtonIsSelected = false
-        isDownloadComplete = false
-
-//        rdGroup.setOnCheckedChangeListener { group, checkedId ->
-//
-//            if(checkedId==-1)
-//            isDownloadComplete = false
-//        }
+//        isDownloadComplete = false
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
