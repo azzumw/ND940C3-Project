@@ -26,13 +26,11 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.content_main.view.*
 
 
-const val TAG = "MainActivity"
 const val STATUS_KEY = "status"
 const val DOWNLOAD_ID_KEY = "download_id"
 const val NOTIFICATION_ID_KEY = "notification_id"
 const val FILE_NAME_KEY = "file_name"
 var isDownloadComplete = false
-var hasDownloadStarted = Download.NOT_STARTED
 var radioButtonIsSelected = false
 
 class MainActivity : AppCompatActivity() {
@@ -60,14 +58,13 @@ class MainActivity : AppCompatActivity() {
         //set radioButtonIsSelected false when starting this activity
 //        rdGroup.clearCheck()
         radioButtonIsSelected = false
+        isDownloadComplete = false
 
-        rdGroup.setOnCheckedChangeListener { group, checkedId ->
-
-            if(checkedId==-1)
-            isDownloadComplete = false
-            hasDownloadStarted = Download.NOT_STARTED
-
-        }
+//        rdGroup.setOnCheckedChangeListener { group, checkedId ->
+//
+//            if(checkedId==-1)
+//            isDownloadComplete = false
+//        }
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
@@ -99,9 +96,7 @@ class MainActivity : AppCompatActivity() {
 
             val intentAction = intent?.action
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE == intentAction) {
-                Log.e("TAG Download Status", "  - completed")
                 isDownloadComplete = true
-                hasDownloadStarted = Download.NOT_STARTED
             }
 
             var statusString = getString(R.string.download_failed_string)
@@ -130,7 +125,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun download() {
 
-        hasDownloadStarted = Download.STARTED
+//        hasDownloadStarted = Download.STARTED
+        isDownloadComplete = false
 
         val request =
             DownloadManager.Request(Uri.parse(currentUrl))
@@ -144,7 +140,6 @@ class MainActivity : AppCompatActivity() {
 
         downloadID =
             downloadManager.enqueue(request)// enqueue puts the download request in the queue.
-        Log.e("MainActivity DOWNLOAD ID:", "$downloadID")
     }
 
 
@@ -159,7 +154,6 @@ class MainActivity : AppCompatActivity() {
             when (view.getId()) {
                 R.id.radio_glide ->
                     if (checked) {
-                        // Pirates are the best
                         currentUrl = GLIDE_URL
                         filename = getString(R.string.radio_option_1)
                     }

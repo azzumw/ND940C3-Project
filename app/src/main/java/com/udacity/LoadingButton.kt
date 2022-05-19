@@ -26,6 +26,8 @@ class LoadingButton @JvmOverloads constructor(
     private var circleColor = 0
     private var loadingRectColor = 0
 
+    private var text = ""
+
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
@@ -36,7 +38,6 @@ class LoadingButton @JvmOverloads constructor(
 
     private val loadingRect = Rect()
     private var rectF = RectF(0f, 0f, 80f, 80f)
-
 
     private var valueAnimator = ValueAnimator()
     private var progress: Int = 0
@@ -51,62 +52,38 @@ class LoadingButton @JvmOverloads constructor(
                 progress = 0
 
                 valueAnimator.cancel()
-                valueAnimator.setIntValues(0,360)
+                valueAnimator.setIntValues(0, 360)
                 invalidate()
             }
 
             is ButtonState.Loading -> {
 
                 //positioning the circle
-                rectF.offsetTo((width-270).toFloat(),30f)
+                rectF.offsetTo((width - 270).toFloat(), 30f)
 
                 //animate the rectangle
                 //create value animator
-                Log.e("LoadingButton", "I am in Loading State")
                 valueAnimator = ValueAnimator.ofInt(0, 360).apply {
                     duration = 2000L
                     addUpdateListener {
-//                        // Update the current progress to use it [onDraw].
+                        // Update the current progress to use it [onDraw].
                         progress = it.animatedValue as Int
-                        Log.e("LoadingButton: Progress Value: ", progress.toString())
-                        Log.e("LoadingButton: Width Value: ", width.toString())
 
-//                        // Redraw the layout to use the new updated value of [progress].
-                        invalidate()
-//                        requestLayout()
-                    }
-//
-                    //if download has not started then repeat anim once
-                    if (hasDownloadStarted == Download.STARTED) {
-                        // Repeat the animation infinitely.
-                        repeatCount = ValueAnimator.INFINITE
-                        repeatMode = ValueAnimator.RESTART
-                    }
-
-//                    // Start the animation.
-                    start()
-
-                    this.addListener(object : AnimatorListenerAdapter() {
-
-                        override fun onAnimationEnd(animation: Animator?) {
-                            super.onAnimationEnd(animation)
-
-                            if (hasDownloadStarted == Download.NOT_STARTED) {
-                                buttonState = ButtonState.Completed
-                                repeatCount = 0
-                            }
+                        if (!isDownloadComplete){
+                            repeatCount = ValueAnimator.INFINITE
+                            repeatMode = ValueAnimator.RESTART
+                        }else{
+                            repeatCount = 0
                         }
-                    })
+
+                        // Redraw the layout to use the new updated value of [progress].
+                        invalidate()
+                    }
+
+                    // Start the animation.
+                    start()
                 }
 
-
-                //add a listener to the valueAnimator
-                //o calculate the circle angle,
-                // button background width, etc.
-                /*
-                * updating these variables according to the current progress,
-                * then use these variables to draw the custom view in onDraw
-                * */
                 text = context.getString(R.string.button_loading)
             }
 
@@ -115,60 +92,58 @@ class LoadingButton @JvmOverloads constructor(
     }
 
 
-    private var text = ""
-
     init {
         isClickable = true
         buttonState = ButtonState.Completed
 
-        context.withStyledAttributes(attrs,R.styleable.LoadingButton){
-            loadingRectColor = getColor(R.styleable.LoadingButton_loadingColor,0)
-            circleColor = getColor(R.styleable.LoadingButton_circleColor,0)
+        context.withStyledAttributes(attrs, R.styleable.LoadingButton) {
+            loadingRectColor = getColor(R.styleable.LoadingButton_loadingColor, 0)
+            circleColor = getColor(R.styleable.LoadingButton_circleColor, 0)
         }
     }
 
+
     override fun performClick(): Boolean {
 
-        if(!radioButtonIsSelected){
+        if (!radioButtonIsSelected) {
             return super.performClick()
         }
 
         /*call parent's performClick to ensure
-            any click listeners attached are also invoked.
-            */
+          any click listeners attached are also invoked.
+        */
         //Call this view's OnClickListener, if it is defined.
         super.performClick()
 
         buttonState = if (buttonState == ButtonState.Completed) {
-            Log.e("LoadingButtonState", "COMPLETED")
             ButtonState.Loading
 
         } else {
-            Log.e("LoadingButtonState", "LOADING")
             ButtonState.Completed
         }
 
         invalidate()
-       return true
+        return true
     }
 
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        //Draw Rectangle
+        //1. Draw Rectangle
         paint.color = loadingRectColor
         loadingRect.set(0, 0, width * progress / 360, height)
-        Log.e("Call from onDraw: ", "progress: $progress")
         canvas?.drawRect(loadingRect, paint)
 
-        //Draw Arc/Circle
+        //2. Draw Arc/Circle
         paint.color = circleColor
-        canvas?.drawArc(rectF,
+        canvas?.drawArc(
+            rectF,
             0f,
             progress.toFloat(),
             true,
-            paint)
+            paint
+        )
 
         //3. Draw Text
         paint.color = Color.WHITE
@@ -179,10 +154,11 @@ class LoadingButton @JvmOverloads constructor(
             paint
         )
 
+        Log.e("onDrawBefore: progress: ",progress.toString())
         if (isDownloadComplete && progress == 360) {
+            Log.e("onDrawAfter: progress: ",progress.toString())
             buttonState = ButtonState.Completed
         }
-
     }
 
 
@@ -198,5 +174,4 @@ class LoadingButton @JvmOverloads constructor(
         heightSize = h
         setMeasuredDimension(w, h)
     }
-
 }
