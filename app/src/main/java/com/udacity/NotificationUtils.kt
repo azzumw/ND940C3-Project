@@ -1,6 +1,5 @@
 package com.udacity
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -24,7 +23,6 @@ fun NotificationManager.sendNotification(context: Context,id:Long,statusString:S
     intent.putExtra(FILE_NAME_KEY, filename)
 
     val pendingIntent = PendingIntent.getActivity(context,NOTIFICATION_ID,intent,PendingIntent.FLAG_UPDATE_CURRENT)
-
 
     val builder = NotificationCompat.Builder(context, CHANNEL_ID)
         .setContentTitle(context.getString(R.string.notification_title))

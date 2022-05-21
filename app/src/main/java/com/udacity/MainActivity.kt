@@ -2,29 +2,19 @@ package com.udacity
 
 import android.app.DownloadManager
 import android.app.DownloadManager.COLUMN_STATUS
-import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import com.udacity.ButtonState.Completed
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.content_main.view.*
-
 
 const val STATUS_KEY = "status"
 const val DOWNLOAD_ID_KEY = "download_id"
@@ -54,7 +44,6 @@ class MainActivity : AppCompatActivity() {
         rdGroup = findViewById(R.id.radioGroup)
 
         radioButtonIsSelected = false
-//        isDownloadComplete = false
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
@@ -115,7 +104,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun download() {
 
-//        hasDownloadStarted = Download.STARTED
         isDownloadComplete = false
 
         val request =
@@ -129,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
 
         downloadID =
-            downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+            downloadManager.enqueue(request)
     }
 
 
@@ -165,8 +153,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        private const val URL =
-            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
         private const val GLIDE_URL = "https://github.com/bumptech/glide"
         private const val LOADAPP_URL =
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter"

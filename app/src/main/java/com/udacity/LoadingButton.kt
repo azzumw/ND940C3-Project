@@ -1,16 +1,11 @@
 package com.udacity
 
-import android.animation.Animator
-import android.animation.AnimatorInflater
-import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.Toast
 import androidx.core.content.withStyledAttributes
 import kotlin.properties.Delegates
 
@@ -61,7 +56,6 @@ class LoadingButton @JvmOverloads constructor(
                 //positioning the circle
                 rectF.offsetTo((width - 270).toFloat(), 30f)
 
-                //animate the rectangle
                 //create value animator
                 valueAnimator = ValueAnimator.ofInt(0, 360).apply {
                     duration = 2000L
